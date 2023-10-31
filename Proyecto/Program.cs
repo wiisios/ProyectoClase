@@ -1,3 +1,7 @@
+using Microsoft.EntityFrameworkCore;
+using Proyecto.Data;
+using Proyecto.Services;
+
 namespace Proyecto
 {
     public class Program
@@ -5,6 +9,12 @@ namespace Proyecto
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Services.AddScoped<URLService>();
+            builder.Services.AddScoped<URLHelpers>();
+
+            builder.Services.AddDbContext<URLContext>(dbContextOptions => dbContextOptions.UseSqlite(
+    builder.Configuration["ConnectionStrings:UrlDBConnectionString"]));
 
             // Add services to the container.
 
