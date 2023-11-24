@@ -17,6 +17,8 @@ namespace Proyecto.Entities
 
         public string Catergory { get; set; }
 
+        public List<User> Users { get; } = new();
+
 
     }
 }

@@ -14,14 +14,27 @@ namespace Proyecto.Services
             _urlhelpers = urlhelpers;
         }
 
-        public URL? GetURL(string url)
+        public string GetURL(string url)
         {
+            if (url.Length <= 6)
+            {
+                URL? theshorturl = _context.Urls.SingleOrDefault(u => u.ShortUrl == url);
+                if (theshorturl != null)
+                {
+                    theshorturl.VisitCounter += 1;
+                }
+                return theshorturl.Url;
+            }
+            
             URL? theurl = _context.Urls.SingleOrDefault(u => u.Url == url);
-            theurl.VisitCounter += 1;
-            return theurl;
+            if (theurl != null)
+            {
+                theurl.VisitCounter += 1;
+            }
+            return theurl.ShortUrl;
         }
 
-        public URL Create(string fullurl)
+        public URL Create(string fullurl, string category)
         {
             string shortenedurl = _urlhelpers.GenerateShortURL();
 
@@ -30,7 +43,7 @@ namespace Proyecto.Services
                 Url = fullurl,
                 ShortUrl = shortenedurl,
                 VisitCounter = 1,
-                Catergory = string.Empty,
+                Catergory = category,
               
             };
             _context.Urls.Add(url);

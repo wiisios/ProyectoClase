@@ -22,26 +22,20 @@ namespace Proyecto.Controllers
         [HttpGet]
         public IActionResult GetShortUrl(string fullurl)
         {
-            URL? url = _urlService.GetURL(fullurl);
+            string url = _urlService.GetURL(fullurl);
 
             if (url is null)
             {
                 return NotFound();
             }
-            return Ok(url.ShortUrl);
-        }
-
-        [HttpGet("hola")]
-        public IActionResult GetUrl()
-        {
-            return Ok(_urlContext.Urls.ToList());
+            return Ok(url);
         }
 
         [HttpPost]
-        public IActionResult CreateURL(string fullurl)
+        public IActionResult CreateURL(string fullurl, string category)
         {
             
-            URL url = _urlService.Create(fullurl);
+            URL url = _urlService.Create(fullurl,category);
 
             return Ok(url.ShortUrl);
             
