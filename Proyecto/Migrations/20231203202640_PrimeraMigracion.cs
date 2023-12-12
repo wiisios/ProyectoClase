@@ -5,11 +5,24 @@
 namespace Proyecto.Migrations
 {
     /// <inheritdoc />
-    public partial class CreacionUsuario : Migration
+    public partial class PrimeraMigracion : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Categories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Categories", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
@@ -26,24 +39,29 @@ namespace Proyecto.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "URLUser",
+                name: "Urls",
                 columns: table => new
                 {
-                    UrlsId = table.Column<int>(type: "INTEGER", nullable: false),
-                    UsersId = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Url = table.Column<string>(type: "TEXT", nullable: false),
+                    ShortUrl = table.Column<string>(type: "TEXT", nullable: false),
+                    VisitCounter = table.Column<int>(type: "INTEGER", nullable: false),
+                    CategoryId = table.Column<int>(type: "INTEGER", nullable: false),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_URLUser", x => new { x.UrlsId, x.UsersId });
+                    table.PrimaryKey("PK_Urls", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_URLUser_Urls_UrlsId",
-                        column: x => x.UrlsId,
-                        principalTable: "Urls",
+                        name: "FK_Urls_Categories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Categories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_URLUser_Users_UsersId",
-                        column: x => x.UsersId,
+                        name: "FK_Urls_Users_UserId",
+                        column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -55,16 +73,24 @@ namespace Proyecto.Migrations
                 values: new object[] { 1, "wiisios99@gmail.com", "asd123", "Wiisios" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_URLUser_UsersId",
-                table: "URLUser",
-                column: "UsersId");
+                name: "IX_Urls_CategoryId",
+                table: "Urls",
+                column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Urls_UserId",
+                table: "Urls",
+                column: "UserId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "URLUser");
+                name: "Urls");
+
+            migrationBuilder.DropTable(
+                name: "Categories");
 
             migrationBuilder.DropTable(
                 name: "Users");

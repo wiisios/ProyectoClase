@@ -10,8 +10,8 @@ using Proyecto.Data;
 namespace Proyecto.Migrations
 {
     [DbContext(typeof(URLContext))]
-    [Migration("20231123221447_Creacion-Usuario")]
-    partial class CreacionUsuario
+    [Migration("20231212025029_testingfix")]
+    partial class testingfix
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -19,15 +19,28 @@ namespace Proyecto.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.12");
 
+            modelBuilder.Entity("Proyecto.Entities.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Categories");
+                });
+
             modelBuilder.Entity("Proyecto.Entities.URL", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Catergory")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("ShortUrl")
                         .IsRequired()
@@ -37,22 +50,19 @@ namespace Proyecto.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("VisitCounter")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Urls");
+                    b.HasIndex("CategoryId");
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Catergory = "busqueda",
-                            ShortUrl = "AbC012",
-                            Url = "google.com",
-                            VisitCounter = 1
-                        });
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Urls");
                 });
 
             modelBuilder.Entity("Proyecto.Entities.User", b =>
@@ -62,15 +72,15 @@ namespace Proyecto.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Password")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("ShortAmount")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Username")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -83,38 +93,38 @@ namespace Proyecto.Migrations
                             Id = 1,
                             Email = "wiisios99@gmail.com",
                             Password = "asd123",
+                            ShortAmount = 10,
                             Username = "Wiisios"
                         });
                 });
 
-            modelBuilder.Entity("URLUser", b =>
+            modelBuilder.Entity("Proyecto.Entities.URL", b =>
                 {
-                    b.Property<int>("UrlsId")
-                        .HasColumnType("INTEGER");
+                    b.HasOne("Proyecto.Entities.Category", "Category")
+                        .WithMany("Urls")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Property<int>("UsersId")
-                        .HasColumnType("INTEGER");
+                    b.HasOne("Proyecto.Entities.User", "User")
+                        .WithMany("Urls")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasKey("UrlsId", "UsersId");
+                    b.Navigation("Category");
 
-                    b.HasIndex("UsersId");
-
-                    b.ToTable("URLUser");
+                    b.Navigation("User");
                 });
 
-            modelBuilder.Entity("URLUser", b =>
+            modelBuilder.Entity("Proyecto.Entities.Category", b =>
                 {
-                    b.HasOne("Proyecto.Entities.URL", null)
-                        .WithMany()
-                        .HasForeignKey("UrlsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Urls");
+                });
 
-                    b.HasOne("Proyecto.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("UsersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+            modelBuilder.Entity("Proyecto.Entities.User", b =>
+                {
+                    b.Navigation("Urls");
                 });
 #pragma warning restore 612, 618
         }

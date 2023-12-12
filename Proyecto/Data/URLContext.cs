@@ -3,6 +3,7 @@ using Proyecto.Entities;
 using System.Collections.Generic;
 using System.IO.Pipelines;
 using System.Reflection.Emit;
+using System.Reflection.Metadata;
 
 namespace Proyecto.Data
 {
@@ -11,21 +12,15 @@ namespace Proyecto.Data
         public DbSet<URL> Urls { get; set; }
         public DbSet<User> Users { get; set; }
 
+        public DbSet<Category> Categories { get; set; }
+
         public URLContext(DbContextOptions<URLContext> options) : base(options)
         {
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            URL google = new URL()
-            {
-                Id = 1,
-                Url = "google.com",
-                ShortUrl = "AbC012",
-                VisitCounter = 1,
-                Catergory = "busqueda",
-
-            };
+            
 
             User victor = new User()
             {
@@ -36,21 +31,18 @@ namespace Proyecto.Data
             };
             
 
-
-            modelBuilder.Entity<URL>().HasData(
-                google);
-
             modelBuilder.Entity<User>().HasData(
                  victor
                  );
 
             modelBuilder.Entity<User>()
-              .HasMany<URL>(e => e.Urls)
-              .WithMany(e => e.Users);
+            .HasMany<URL>(e => e.Urls)
+            .WithOne(e => e.User);
 
 
-
-
+            modelBuilder.Entity<Category>()
+            .HasMany<URL>(e => e.Urls)
+            .WithOne(e => e.Category);
 
 
             base.OnModelCreating(modelBuilder);

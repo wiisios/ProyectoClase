@@ -12,13 +12,14 @@ namespace Proyecto.Entities
         public string Url { get; set; }
         [Required]
         public string ShortUrl { get; set; }
-
         public int VisitCounter { get; set; }
 
-        public string Catergory { get; set; }
+        [ForeignKey("UserId")]
+        public int UserId { get; set; }
+        public User User { get; set; } = new();
 
-        public List<User> Users { get; } = new();
-
-
+        [ForeignKey("CategoryId")]
+        public int CategoryId { get; set; }
+        public Category Category { get; set; } = new();
     }
 }

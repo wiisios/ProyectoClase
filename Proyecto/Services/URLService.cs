@@ -1,12 +1,14 @@
 ﻿using Proyecto.Data;
+using Proyecto.Data.Interfaces;
 using Proyecto.Entities;
 
 namespace Proyecto.Services
 {
-    public class URLService
+    public class URLService : IUrlService
     {
         private readonly URLContext _context;
         private readonly URLHelpers _urlhelpers;
+
 
         public URLService(URLContext context, URLHelpers urlhelpers)
         {
@@ -14,8 +16,10 @@ namespace Proyecto.Services
             _urlhelpers = urlhelpers;
         }
 
-        public string GetURL(string url)
+        public string GetFullURL(string url)
         {
+
+
             if (url.Length <= 6)
             {
                 URL? theshorturl = _context.Urls.SingleOrDefault(u => u.ShortUrl == url);
@@ -25,7 +29,7 @@ namespace Proyecto.Services
                 }
                 return theshorturl.Url;
             }
-            
+
             URL? theurl = _context.Urls.SingleOrDefault(u => u.Url == url);
             if (theurl != null)
             {
@@ -34,7 +38,12 @@ namespace Proyecto.Services
             return theurl.ShortUrl;
         }
 
-        public URL Create(string fullurl, string category)
+        public URL GetById(int urlId)
+        {
+            return _context.Urls.SingleOrDefault(x => x.Id == urlId);
+        }
+
+        public URL Create(string fullurl, Category category, User user)
         {
             string shortenedurl = _urlhelpers.GenerateShortURL();
 
@@ -43,9 +52,12 @@ namespace Proyecto.Services
                 Url = fullurl,
                 ShortUrl = shortenedurl,
                 VisitCounter = 1,
-                Catergory = category,
-              
+                Category = category,
+                User = user
+                 
             };
+            
+
             _context.Urls.Add(url);
             _context.SaveChanges();
 
